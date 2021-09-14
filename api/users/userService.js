@@ -34,6 +34,17 @@ module.exports ={
         );
       },//end getting by id
 
+      getProfileByUserId:(id,callBack)=>{
+        var sql="SELECT profile_image FROM tblstaff WHERE staffid = ?"
+        pool.query(sql,[id],(error, results, fields) => {
+            if (error) {
+              callBack(error);
+            }
+            return callBack(null, results[0]);
+          }
+        );
+      },//end getting by id
+
     updateUser: (data, callBack) => { 
         var sql = "UPDATE tblstaff set email=?, firstname =? , lastname =?  WHERE staffid = ?";
         pool.query(sql,

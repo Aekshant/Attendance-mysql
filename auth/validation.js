@@ -12,7 +12,8 @@ module.exports = {
             message: "Invalid Token..."
           });
         } else {
-          req.decoded = decoded;
+          req.staff = decoded.results;
+          // console.log(req.staff);
           next();
         }
       });

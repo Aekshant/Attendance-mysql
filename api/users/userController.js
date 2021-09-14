@@ -1,8 +1,8 @@
-const {create,  getUserByUserId, getUsers, updateUser, deleteUser,getUserByUserEmail} =require("./userService");
+const {create,  getUserByUserId, getUsers, updateUser, deleteUser,getUserByUserEmail, getProfileByUserId} =require("./userService");
+const {admin}=require("../../auth/admin")
 const { hashSync, genSaltSync,compare} = require("bcrypt");
 var {sign} = require('jsonwebtoken');
 const pool = require("../../dbconfig")
-var mysql      = require('mysql');
 module.exports ={
     createUser: (req, res) => {
         const body = req.body;
@@ -35,8 +35,32 @@ module.exports ={
       })
       },
       getUserByUserId: (req, res) => {
+        console.log(req.staff);
         const id = req.params.id;
         getUserByUserId(id, (err, results) => {
+          if (err) {
+            console.log(err);
+            return;
+          }
+          if (!results) {
+            return res.json({
+              success: 1,
+              data: [],
+              message: "Record not Found"
+            });
+          }
+          results.password = undefined;
+          return res.json({
+            success: 1,
+            data: results
+          });
+        });
+      },
+      //get by id ends
+      getProfileByUserId: (req, res) => {
+        const id = req.staff.staffid;
+        getProfileByUserId(id, (err, results) => {
+          
           if (err) {
             console.log(err);
             return;
@@ -96,6 +120,8 @@ module.exports ={
    login: (req, res) => {
     const body = req.body;
     getUserByUserEmail(body.email, (err, results) => {
+      results = results[0];
+      
       if (err) {
         console.log(err);
       }
@@ -108,8 +134,8 @@ module.exports ={
       const result = compare(body.password, results.password);
       if (result) {
         results.password = undefined;
-        console.log(results);
-        const jsontoken = sign({ result: results }, "qwe1234", {
+        
+        const jsontoken = sign({ results } , "qwe1234", {
           expiresIn: "24h"
         });
         return res.json({
@@ -124,5 +150,6 @@ module.exports ={
         });
       }
     });
-  }
+  },
+
 }
