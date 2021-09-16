@@ -48,7 +48,7 @@ module.exports ={
     updateUser: (data, callBack) => { 
         var sql = "UPDATE tblstaff set email=?, firstname =? , lastname =?  WHERE staffid = ?";
         pool.query(sql,
-          [data.email,data.firstname,data.lastname,data.staffid],
+          [data.body.email,data.body.firstname,data.body.lastname,data.staffid],
           (error, results) => {
             if (error) {
               callBack(error);

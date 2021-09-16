@@ -1,5 +1,5 @@
 const {create,  getUserByUserId, getUsers, updateUser, deleteUser,getUserByUserEmail, getProfileByUserId} =require("./userService");
-const {admin}=require("../../auth/admin")
+const {admin}=require("../../middleware/admin")
 const { hashSync, genSaltSync,compare} = require("bcrypt");
 var {sign} = require('jsonwebtoken');
 const pool = require("../../dbconfig")
@@ -35,7 +35,6 @@ module.exports ={
       })
       },
       getUserByUserId: (req, res) => {
-        console.log(req.staff);
         const id = req.params.id;
         getUserByUserId(id, (err, results) => {
           if (err) {
@@ -92,7 +91,8 @@ module.exports ={
     });
   },
   updateUsers: (req, res) => {
-    const body = req.body;
+    let id = req.params.id;
+    let body ={body: req.body,staffid:id};
     updateUser(body, (err, results) => {
       if (err) {
         console.log(err);

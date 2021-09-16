@@ -1,4 +1,6 @@
 const jwt = require("jsonwebtoken");
+
+const pool = require("../dbconfig")
 module.exports = {
   checkToken: (req, res, next) => {
     let token = req.get("authorization");
@@ -13,14 +15,20 @@ module.exports = {
           });
         } else {
           req.staff = decoded.results;
+          var sql = "SELECT * FROM tblstaff where staffid = '"+ req.staff.staffid +"'";
+          pool.query(sql,[],(err,results)=>{
+            // console.log(results[0]);
+            req.staff = results[0];
+            next();
+          });
           // console.log(req.staff);
-          next();
+         
         }
       });
     } else {
       return res.json({
         success: 0,
-        message: "Access Denied! Unauthorized User"
+        message: "Invalid Token! Unauthorized User"
       });
     }
   }
